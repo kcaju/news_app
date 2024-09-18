@@ -6,4 +6,5 @@ class ColorConstants {
   static const Color blue = Colors.blue;
   static const Color deepblue = Color(0xff0000FF);
   static const Color grey = Colors.grey;
+  static const Color red = Colors.red;
 }

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:news_app/controller/sportsnews_controller.dart';
 import 'package:news_app/view/news_detailscreen/news_details_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SportsnewsScreen extends StatefulWidget {
   const SportsnewsScreen({super.key});
@@ -50,6 +51,15 @@ class _SportsnewsScreenState extends State<SportsnewsScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => NewsDetailsScreen(
+                                  readMore: () async {
+                                    final Uri url = Uri.parse(sportsProv
+                                            .sportsObj?.articles?[index].url ??
+                                        "");
+                                    if (!await launchUrl(url,
+                                        mode: LaunchMode.platformDefault)) {
+                                      throw Exception('Could not launch $url');
+                                    }
+                                  },
                                   tabCategoryOption: 2,
                                   index: index,
                                   sportsObj: sportsProv.sportsObj,

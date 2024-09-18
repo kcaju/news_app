@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:news_app/controller/searchscreen_controller.dart';
+import 'package:news_app/view/searchednews_detailscreen/searchednews_detailscreen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -62,46 +64,82 @@ class _SearchScreenState extends State<SearchScreen> {
                       ? Center(
                           child: CircularProgressIndicator(),
                         )
-                      : Card(
-                          child: ListTile(
-                              title: Text(
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                value.searchObj?.articles?[index].title ?? "",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    value.searchObj?.articles?[index].content ??
-                                        "",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12),
-                                  ),
-                                  Text(
-                                    formattedDate,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                              trailing: Container(
-                                height: 100,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image: CachedNetworkImageProvider(value
-                                                .searchObj
-                                                ?.articles?[index]
-                                                .urlToImage ??
-                                            ""))),
-                              )),
+                      : InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SearchednewsDetailscreen(
+                                          readMore: () async {
+                                            final Uri url = Uri.parse(value
+                                                    .searchObj
+                                                    ?.articles?[index]
+                                                    .url ??
+                                                "");
+                                            if (!await launchUrl(url,
+                                                mode: LaunchMode
+                                                    .platformDefault)) {
+                                              throw Exception(
+                                                  'Could not launch $url');
+                                            }
+                                          },
+                                          title: value.searchObj
+                                                  ?.articles?[index].title ??
+                                              "",
+                                          date: formattedDate,
+                                          image: value
+                                                  .searchObj
+                                                  ?.articles?[index]
+                                                  .urlToImage ??
+                                              "",
+                                          content: value.searchObj
+                                                  ?.articles?[index].content ??
+                                              ""),
+                                ));
+                          },
+                          child: Card(
+                            child: ListTile(
+                                title: Text(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  value.searchObj?.articles?[index].title ?? "",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      value.searchObj?.articles?[index]
+                                              .content ??
+                                          "",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12),
+                                    ),
+                                    Text(
+                                      formattedDate,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                                trailing: Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: CachedNetworkImageProvider(
+                                              value.searchObj?.articles?[index]
+                                                      .urlToImage ??
+                                                  ""))),
+                                )),
+                          ),
                         );
                 },
               ),

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:news_app/controller/businessnews_controller.dart';
 import 'package:news_app/view/news_detailscreen/news_details_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BusinessNews extends StatefulWidget {
   const BusinessNews({super.key});
@@ -51,6 +52,17 @@ class _BusinessNewsState extends State<BusinessNews> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => NewsDetailsScreen(
+                                  readMore: () async {
+                                    final Uri url = Uri.parse(businessProv
+                                            .businessObj
+                                            ?.articles?[index]
+                                            .url ??
+                                        "");
+                                    if (!await launchUrl(url,
+                                        mode: LaunchMode.platformDefault)) {
+                                      throw Exception('Could not launch $url');
+                                    }
+                                  },
                                   tabCategoryOption: 5,
                                   index: index,
                                   businessObj: businessProv.businessObj,

@@ -46,7 +46,7 @@ class _BottomnavScreenState extends State<BottomnavScreen> {
               size: 35,
             ),
             Icon(
-              Icons.bookmark_add_outlined,
+              Icons.bookmark_add,
               color: ColorConstants.white,
               size: 35,
             ),

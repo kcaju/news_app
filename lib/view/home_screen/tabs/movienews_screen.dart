@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:news_app/controller/movienews_controller.dart';
 import 'package:news_app/view/news_detailscreen/news_details_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MovienewsScreen extends StatefulWidget {
   const MovienewsScreen({super.key});
@@ -50,6 +51,15 @@ class _MovienewsScreenState extends State<MovienewsScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => NewsDetailsScreen(
+                                  readMore: () async {
+                                    final Uri url = Uri.parse(movieProv
+                                            .movieObj?.articles?[index].url ??
+                                        "");
+                                    if (!await launchUrl(url,
+                                        mode: LaunchMode.platformDefault)) {
+                                      throw Exception('Could not launch $url');
+                                    }
+                                  },
                                   tabCategoryOption: 4,
                                   index: index,
                                   movieObj: movieProv.movieObj,

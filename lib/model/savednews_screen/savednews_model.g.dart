@@ -20,6 +20,7 @@ class SavednewsModelAdapter extends TypeAdapter<SavednewsModel> {
       title: fields[0] as String,
       content: fields[1] as String?,
       image: fields[3] as String?,
+      url: fields[4] as String?,
       date: fields[2] as String,
     );
   }
@@ -27,7 +28,7 @@ class SavednewsModelAdapter extends TypeAdapter<SavednewsModel> {
   @override
   void write(BinaryWriter writer, SavednewsModel obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class SavednewsModelAdapter extends TypeAdapter<SavednewsModel> {
       ..writeByte(2)
       ..write(obj.date)
       ..writeByte(3)
-      ..write(obj.image);
+      ..write(obj.image)
+      ..writeByte(4)
+      ..write(obj.url);
   }
 
   @override

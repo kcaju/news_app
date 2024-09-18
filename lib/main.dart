@@ -9,7 +9,7 @@ import 'package:news_app/controller/savednews_controller.dart';
 import 'package:news_app/controller/searchscreen_controller.dart';
 import 'package:news_app/controller/sportsnews_controller.dart';
 import 'package:news_app/model/savednews_screen/savednews_model.dart';
-import 'package:news_app/view/bottomnav_screen/bottomnav_screen.dart';
+import 'package:news_app/view/getstart_screen/getstart_screen.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: BottomnavScreen(),
+        home: GetstartScreen(),
       ),
     );
   }

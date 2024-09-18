@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:news_app/controller/allnews_controller.dart';
 import 'package:news_app/view/news_detailscreen/news_details_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AllnewsScreen extends StatefulWidget {
   const AllnewsScreen({super.key});
@@ -50,6 +51,15 @@ class _AllnewsScreenState extends State<AllnewsScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => NewsDetailsScreen(
+                                readMore: () async {
+                                  final Uri url = Uri.parse(
+                                      allProv.allObj?.articles?[index].url ??
+                                          "");
+                                  if (!await launchUrl(url,
+                                      mode: LaunchMode.platformDefault)) {
+                                    throw Exception('Could not launch $url');
+                                  }
+                                },
                                 index: index,
                                 tabCategoryOption: 1,
                                 allObj: allProv.allObj,

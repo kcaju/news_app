@@ -1,78 +1,40 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:news_app/controller/savednews_controller.dart';
-import 'package:news_app/model/home_screen/news_res_model.dart';
-import 'package:news_app/model/tabs_model/allnews_model.dart';
-import 'package:news_app/model/tabs_model/businessnews_model.dart';
-import 'package:news_app/model/tabs_model/healthnews_model.dart';
-import 'package:news_app/model/tabs_model/moviesnews_model.dart';
-import 'package:news_app/model/tabs_model/sportsnews_model.dart';
 import 'package:news_app/utils/color_constants.dart';
 import 'package:provider/provider.dart';
 
-class NewsDetailsScreen extends StatefulWidget {
-  const NewsDetailsScreen(
+class SearchednewsDetailscreen extends StatefulWidget {
+  const SearchednewsDetailscreen(
       {super.key,
-      required this.index,
-      required this.tabCategoryOption,
-      this.allObj,
-      this.sportsObj,
-      this.healthObj,
-      this.movieObj,
-      this.businessObj,
-      this.newsObj,
+      required this.title,
+      required this.image,
+      required this.content,
+      required this.date,
       this.readMore});
+  final String title, image, content, date;
   final VoidCallback? readMore;
-  final int index,
-      tabCategoryOption; // The category of the news tab and index of article in the list
-  final EveryNewsResModel? allObj;
-  final SportsResModel? sportsObj;
-  final HealthResModel? healthObj;
-  final MoviesResModel? movieObj;
-  final BusinessResModel? businessObj;
-  final NewsResModel? newsObj;
 
   @override
-  State<NewsDetailsScreen> createState() => _NewsDetailsScreenState();
+  State<SearchednewsDetailscreen> createState() =>
+      _SearchednewsDetailscreenState();
 }
 
-class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
+class _SearchednewsDetailscreenState extends State<SearchednewsDetailscreen> {
   bool isSaved = false;
   @override
   void initState() {
-    // Check if the article is saved when the widget is initialized
     _checkIfSaved();
     super.initState();
   }
 
-  // Retrieve the current article based on the category option
-  dynamic _getArticle() {
-    switch (widget.tabCategoryOption) {
-      case 1:
-        return widget.allObj?.articles?[widget.index];
-      case 2:
-        return widget.sportsObj?.articles?[widget.index];
-      case 3:
-        return widget.healthObj?.articles?[widget.index];
-      case 4:
-        return widget.movieObj?.articles?[widget.index];
-      case 5:
-        return widget.businessObj?.articles?[widget.index];
-      case 6:
-        return widget.newsObj?.articles?[widget.index];
-      default:
-        return widget.allObj?.articles?[widget.index];
-    }
-  }
-
   Future<void> _checkIfSaved() async {
-    final saveProv = context.read<SavednewsController>();
-    final article = _getArticle();
-    final keys = saveProv.keys;
+    final savedNewsController = context.read<SavednewsController>();
+    // Check if the news item is already saved
+    final keys = savedNewsController.keys;
     for (var key in keys) {
-      final savedArticle = saveProv.getCurrentNews(key);
-      if (savedArticle?.title == article.title) {
+      final item = savedNewsController.getCurrentNews(key);
+      if (item?.title == widget.title) {
         setState(() {
           isSaved = true;
         });
@@ -83,12 +45,6 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Get the article details
-    final article = _getArticle();
-
-    String date = DateFormat('dd/MM/yy - kk:mm')
-        .format(article.publishedAt ?? DateTime.now());
-    //provider object
     final saveProv = context.watch<SavednewsController>();
 
     return Scaffold(
@@ -109,7 +65,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                     image: DecorationImage(
                       fit: BoxFit.fill,
                       image: CachedNetworkImageProvider(
-                        article.urlToImage ?? "",
+                        widget.image,
                       ),
                     ),
                     color: ColorConstants.blue,
@@ -126,16 +82,15 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                         isSaved = !isSaved;
                         if (isSaved) {
                           context.read<SavednewsController>().saveNews(
-                              title: article.title ?? "",
-                              url: article.url ?? "",
-                              date: date,
-                              content: article.content ?? "",
-                              image: article.urlToImage ?? "");
+                              title: widget.title,
+                              date: widget.date,
+                              content: widget.content,
+                              image: widget.image);
                         } else {
                           final keys = saveProv.keys;
                           for (var key in keys) {
                             final savedArticle = saveProv.getCurrentNews(key);
-                            if (savedArticle?.title == article.title) {
+                            if (savedArticle?.title == widget.title) {
                               context
                                   .read<SavednewsController>()
                                   .removeSavedNews(key);
@@ -148,13 +103,17 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                           shape: BoxShape.circle, color: ColorConstants.white),
-                      child: Icon(
-                        isSaved
-                            ? Icons.bookmark_add
-                            : Icons.bookmark_add_outlined,
-                        size: 50,
-                        color: ColorConstants.deepblue,
-                      ),
+                      child: isSaved
+                          ? Icon(
+                              Icons.bookmark_add,
+                              size: 50,
+                              color: ColorConstants.deepblue,
+                            )
+                          : Icon(
+                              Icons.bookmark_add_outlined,
+                              size: 50,
+                              color: ColorConstants.deepblue,
+                            ),
                     ),
                   ),
                 )
@@ -167,21 +126,21 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    article.title ?? "",
+                    widget.title,
                     style: TextStyle(color: ColorConstants.white, fontSize: 25),
                   ),
                   SizedBox(height: 15),
                   Text(
-                    date,
+                    widget.date,
                     style: TextStyle(color: ColorConstants.white, fontSize: 16),
                   ),
                   SizedBox(height: 20),
+                  // Text(
+                  //   article.description ?? "",
+                  //   style: TextStyle(color: ColorConstants.white, fontSize: 20),
+                  // ),
                   Text(
-                    article.description ?? "",
-                    style: TextStyle(color: ColorConstants.white, fontSize: 20),
-                  ),
-                  Text(
-                    article.content ?? "",
+                    widget.content,
                     style: TextStyle(color: ColorConstants.white, fontSize: 20),
                   ),
                   TextButton(

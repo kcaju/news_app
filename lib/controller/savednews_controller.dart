@@ -9,6 +9,7 @@ class SavednewsController with ChangeNotifier {
       {required String title,
       required String date,
       String? image,
+      String? url,
       String? content}) async {
     bool alreadySaved = false;
     for (int i = 0; i < keys.length; i++) {
@@ -20,7 +21,7 @@ class SavednewsController with ChangeNotifier {
     }
     if (alreadySaved == false) {
       await newsBox.add(SavednewsModel(
-          title: title, content: content, date: date, image: image));
+          url: url, title: title, content: content, date: date, image: image));
       keys = newsBox.keys.toList();
     } else {
       print("error");

@@ -11,6 +11,7 @@ import 'package:news_app/view/home_screen/tabs/movienews_screen.dart';
 import 'package:news_app/view/home_screen/tabs/sportsnews_screen.dart';
 import 'package:news_app/view/news_detailscreen/news_details_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -82,6 +83,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   index: index,
                                   tabCategoryOption: 6,
                                   newsObj: homeProv.newsObj,
+                                  readMore: () async {
+                                    final Uri url = Uri.parse(homeProv
+                                            .newsObj?.articles?[index].url ??
+                                        "");
+                                    if (!await launchUrl(url,
+                                        mode: LaunchMode.platformDefault)) {
+                                      throw Exception('Could not launch $url');
+                                    }
+                                  },
                                 ),
                               ));
                         },
